@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:nft_brand_scanner/src/router/router.dart';
 import 'package:nft_brand_scanner/src/screens/auth/auth_screen.dart';
+import 'package:nft_brand_scanner/src/screens/not_found/not_found_screen.dart';
 // import 'package:nft_brand_scanner/src/screens/auth/auth_screen.dart';
 // import 'package:nft_brand_scanner/src/screens/qr_scanner_screen/qr_scanner_screen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return const CupertinoApp(
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,
-      home: AuthScreen(),
+      home: NotFoundScreen(),
     );
   }
 }
