@@ -75,6 +75,8 @@ super.dispose();
               left: (MediaQuery.sizeOf(context).width - 48) / 2,
               bottom: (MediaQuery.sizeOf(context).height * .15),
               child: CupertinoButton(
+                minSize: 0,
+                padding: EdgeInsets.zero,
                      onPressed: () {
                             _toggleFlash;
                           },

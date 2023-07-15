@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../common/constans/color_constants.dart';
+import '../../router/routing_const.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -82,15 +83,15 @@ class AuthScreen extends StatelessWidget {
                             colors: [
                               Color(0xFFFFD840),
                               Color(0xFFF3ACFF),
-                              Color(0xFF8AECFF)
+                              Color(0xFF8AECFF),
                             ],
                             radius: 6,
-                            center: Alignment(1,-3.5),
+                            center: Alignment(1, -3.5),
                           ),
                         ),
                         child: CupertinoButton(
                           onPressed: () {
-                            print('Knopka najata');
+                         Navigator.pushNamed(context, ProductRoute);
                           },
                           borderRadius: BorderRadius.circular(16),
                           child: const Text(
