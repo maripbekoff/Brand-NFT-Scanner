@@ -1,10 +1,26 @@
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:walletconnect_dart/walletconnect_dart.dart';
 import '../../common/constans/color_constants.dart';
-import '../../router/routing_const.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
 
+class _AuthScreenState extends State<AuthScreen> {
+  final connector = WalletConnect(
+    bridge: 'https://bridge.walletconnect.org',
+    clientMeta: const PeerMeta(
+      name: 'WalletConnect',
+      description: 'WalletConnect Developer App',
+      url: 'https://walletconnect.org',
+      icons: [
+        'https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media'
+      ],
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -90,8 +106,23 @@ class AuthScreen extends StatelessWidget {
                           ),
                         ),
                         child: CupertinoButton(
-                          onPressed: () {
-                         Navigator.pushNamed(context, ProductRoute);
+                          onPressed: () async {
+                            connector.on(
+                                'connect', (session) => print(session));
+                            connector.on(
+                                'session_update', (payload) => print(payload));
+                            connector.on(
+                                'disconnect', (session) => print(session));
+                            if (!connector.connected) {
+                              final session = await connector.createSession(
+                                chainId: 4160,
+                                onDisplayUri: (uri) {
+                                  launchUrlString(uri,
+                                      mode: LaunchMode.externalApplication);
+                                },
+                              );
+                            }
+                            // Navigator.pushNamed(context, *****);
                           },
                           borderRadius: BorderRadius.circular(16),
                           child: const Text(
