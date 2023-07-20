@@ -1,6 +1,13 @@
+import 'dart:developer';
+
+import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:walletconnect_dart/walletconnect_dart.dart';
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3dart/web3dart.dart';
+
 import '../../common/constans/color_constants.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -10,17 +17,41 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final connector = WalletConnect(
-    bridge: 'https://bridge.walletconnect.org',
-    clientMeta: const PeerMeta(
-      name: 'WalletConnect',
-      description: 'WalletConnect Developer App',
-      url: 'https://walletconnect.org',
-      icons: [
-        'https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media'
-      ],
-    ),
-  );
+  String launchError = 'Metamask wallet not installed';
+  String kShortChainId = 'eip155';
+  String kFullChainId = 'eip155:1';
+
+  String? _url;
+  SessionData? _sessionData;
+
+  String deepLinkUrl = 'metamask://wc?uri=';
+
+  late Web3App walletConnect;
+
+  @override
+  void initState() {
+    deepLinkUrl = 'metamask://wc?uri=$_url';
+    initWallet();
+    super.initState();
+  }
+
+  initWallet() async {
+    walletConnect = await Web3App.createInstance(
+      projectId: '2b0e67dfae16f50e55487eb30fe3de4d',
+      metadata: const PairingMetadata(
+        name: 'Flutter WalletConnect',
+        description: 'Flutter WalletConnect Dapp Example',
+        url: 'https://walletconnect.com/',
+        icons: [
+          'https://walletconnect.com/walletconnect-logo.png',
+        ],
+        redirect: Redirect(
+          native: 'nftbrandscanner://',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -107,21 +138,43 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         child: CupertinoButton(
                           onPressed: () async {
-                            connector.on(
-                                'connect', (session) => print(session));
-                            connector.on(
-                                'session_update', (payload) => print(payload));
-                            connector.on(
-                                'disconnect', (session) => print(session));
-                            if (!connector.connected) {
-                              final session = await connector.createSession(
-                                chainId: 4160,
-                                onDisplayUri: (uri) {
-                                  launchUrlString(uri,
-                                      mode: LaunchMode.externalApplication);
-                                },
-                              );
-                            }
+                            String? result = await createSession();
+
+                            print(result);
+
+                            const rpcUrl = 'https://bsc-testnet.publicnode.com';
+
+                            final client = Web3Client(rpcUrl, Client());
+
+                            String abiString = await rootBundle
+                                .loadString('assets/abis/abi.json');
+
+                            ContractAbi abi =
+                                ContractAbi.fromJson(abiString, 'contract');
+
+                            DeployedContract deployedContract = DeployedContract(
+                                abi,
+                                EthereumAddress.fromHex(
+                                    '0x3B823Eef6D5CDbADe6bCb60d91A6C118594AB42f'));
+
+                            Credentials credentials =
+                                EthPrivateKey.fromHex('$result');
+
+                            EtherAmount balance =
+                                await client.getBalance(credentials.address);
+
+                            BigInt totalBrandCreated = (await client.call(
+                              contract: deployedContract,
+                              function: deployedContract
+                                  .function('totalBrandCreated'),
+                              params: [],
+                            ))
+                                .first;
+
+                            print(totalBrandCreated);
+                            print(credentials.address);
+                            print(balance.getInEther);
+
                             // Navigator.pushNamed(context, *****);
                           },
                           borderRadius: BorderRadius.circular(16),
@@ -146,5 +199,60 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> metamaskIsInstalled() async {
+    return await LaunchApp.isAppInstalled(
+      iosUrlScheme: 'metamask://',
+      androidPackageName: 'io.metamask',
+    );
+  }
+
+  Future<String?> createSession() async {
+    final ConnectResponse connectResponse = await walletConnect.connect(
+      requiredNamespaces: {
+        kShortChainId: RequiredNamespace(
+          chains: [kFullChainId],
+          methods: [
+            'eth_sign',
+            'eth_signTransaction',
+            'eth_sendTransaction',
+          ],
+          events: [
+            'chainChanged',
+            'accountsChanged',
+          ],
+        ),
+      },
+    );
+
+    final Uri? uri = connectResponse.uri;
+
+    if (uri != null) {
+      final String encodedUrl = Uri.encodeComponent('$uri');
+
+      _url = encodedUrl;
+      deepLinkUrl = 'metamask://wc?uri=$_url';
+
+      log(_url.toString());
+      log(deepLinkUrl.toString());
+
+      await launchUrlString(
+        deepLinkUrl,
+        mode: LaunchMode.externalApplication,
+      );
+
+      _sessionData = await connectResponse.session.future;
+
+      log(_sessionData.toString());
+
+      final String account = NamespaceUtils.getAccount(
+        _sessionData!.namespaces.values.first.accounts.first,
+      );
+
+      return account;
+    }
+
+    return null;
   }
 }
