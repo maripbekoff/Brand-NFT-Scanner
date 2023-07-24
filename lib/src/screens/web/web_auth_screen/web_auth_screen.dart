@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nft_brand_scanner/src/common/widgets/modals/error_modal.dart';
 import 'package:nft_brand_scanner/src/common/widgets/modals/not_supported_modal.dart';
+import 'package:nft_brand_scanner/src/router/routing_const.dart';
 import 'package:nft_brand_scanner/src/screens/web/web_auth_screen/cubit/web_login_cubit.dart';
 import '../../../common/constans/color_constants.dart';
 
@@ -36,7 +37,7 @@ class _WebAuthScreenState extends State<WebAuthScreen> {
               child: BlocConsumer<WebLoginCubit, WebLoginState>(
                 listener: (context, state) {
                   if (state is WebLoginLoaded) {
-                    print('rabotaet');
+                    Navigator.pushNamed(context, CreateOrderRoute);
                   } else if (state is WebLoginFailed) {
                     showCupertinoModalPopup(
                         context: context,

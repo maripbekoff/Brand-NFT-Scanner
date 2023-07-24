@@ -5,6 +5,7 @@ import 'package:nft_brand_scanner/src/router/router.dart';
 import 'package:nft_brand_scanner/src/screens/auth/auth_screen.dart';
 import 'package:nft_brand_scanner/src/screens/web/web_auth_screen/cubit/web_login_cubit.dart';
 import 'package:nft_brand_scanner/src/screens/web/web_auth_screen/web_auth_screen.dart';
+import 'src/screens/web/create_order_screen/cubit/create_order_cubit.dart';
 
 // owner Aneka
 void main() {
@@ -16,8 +17,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WebLoginCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => WebLoginCubit(),
+        ),
+        BlocProvider(
+          create: (context) => CreateOrderCubit(),
+        ),
+      ],
       child: const CupertinoApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: AppRouter.generateRoute,
