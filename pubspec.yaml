@@ -41,6 +41,8 @@ dependencies:
   http: ^1.1.0
   walletconnect_flutter_v2: ^2.0.14
   external_app_launcher: ^3.1.0
+  flutter_web3: ^2.1.9
+  flutter_bloc:
 
 dev_dependencies:
   flutter_test:

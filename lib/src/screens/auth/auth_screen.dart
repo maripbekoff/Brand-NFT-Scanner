@@ -1,12 +1,12 @@
-import 'dart:developer';
+import 'dart:developer'; // надо крч
 
-import 'package:external_app_launcher/external_app_launcher.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:external_app_launcher/external_app_launcher.dart'; // для проверки установлен ли Метамаск
+import 'package:flutter/cupertino.dart'; 
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:http/http.dart'; // отправляет запрос на сервер
+import 'package:url_launcher/url_launcher_string.dart'; // чтобы открывать приложение (Метамаск, ссылки и блаблабла) 
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart'; // криптокошелёк
+import 'package:web3dart/web3dart.dart'; // технология криптовалют, для взаимодействия со смарт контрактами (цифровой договор) :)
 
 import '../../common/constans/color_constants.dart';
 
@@ -17,14 +17,14 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  String launchError = 'Metamask wallet not installed';
-  String kShortChainId = 'eip155';
+  String launchError = 'Metamask wallet not installed'; //переменная ошибки
+  String kShortChainId = 'eip155'; 
   String kFullChainId = 'eip155:1';
 
-  String? _url;
-  SessionData? _sessionData;
+  String? _url; //пока забей
+  SessionData? _sessionData; //пока забей
 
-  String deepLinkUrl = 'metamask://wc?uri=';
+  String deepLinkUrl = 'metamask://wc?uri='; //пока забей
 
   late Web3App walletConnect;
 
@@ -35,7 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
     super.initState();
   }
 
-  initWallet() async {
+  initWallet() async { 
     walletConnect = await Web3App.createInstance(
       projectId: '2b0e67dfae16f50e55487eb30fe3de4d',
       metadata: const PairingMetadata(
@@ -46,11 +46,12 @@ class _AuthScreenState extends State<AuthScreen> {
           'https://walletconnect.com/walletconnect-logo.png',
         ],
         redirect: Redirect(
-          native: 'nftbrandscanner://',
+          native: 'nftbrandscanner://', //когда чел авторизовался, он возвращается обратно в МОЁ приложение
+          
         ),
       ),
     );
-  }
+  } //пока забей
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +139,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         child: CupertinoButton(
                           onPressed: () async {
-                            String? result = await createSession();
+                            String? result = await createSession(); 
 
                             print(result);
 
@@ -175,7 +176,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             print(credentials.address);
                             print(balance.getInEther);
 
-                            // Navigator.pushNamed(context, *****);
+                            
                           },
                           borderRadius: BorderRadius.circular(16),
                           child: const Text(
@@ -208,7 +209,7 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Future<String?> createSession() async {
+  Future<String?> createSession() async {  //классная функция
     final ConnectResponse connectResponse = await walletConnect.connect(
       requiredNamespaces: {
         kShortChainId: RequiredNamespace(
