@@ -1,0 +1,1 @@
+enum WebPlatform{ios, android, web}
