@@ -1,16 +1,7 @@
 # nft_brand_scanner
 
-A new Flutter project.
+Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+NFT Brand Scanner is a mobile application designed to solve the problem of counterfeiting and verifying the authenticity of goods, especially in the context of branded clothing and accessories. We strive to provide users with the ability to easily and quickly verify the authenticity of goods using NFT technology (non-interchangeable tokens) and QR code scanning.
